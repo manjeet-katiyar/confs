@@ -1,0 +1,104 @@
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+# if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+#   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+# fi
+
+export ZSH="/home/manjeet/.oh-my-zsh"
+
+#ZSH_THEME="agnoster"
+ZSH_THEME="powerlevel10k/powerlevel10k"
+
+POWERLEVEL9K_MODE="nerdfont-complete"
+
+# POWERLEVEL9K_DISABLE_RPROMPT=true
+POWERLEVEL9K_PROMPT_ON_NEWLINE=true
+POWERLEVEL9K_MULTILINE_LAST_PROMPT_PREFIX="❯ "
+POWERLEVEL9K_MULTILINE_FIRST_PROMPT_PREFIX=""
+
+# POWERLEVEL9K_CUSTOM_FEDORA_ICON="echo -e '\uF30A'"
+# POWERLEVEL9K_CUSTOM_FEDORA_ICON_BACKGROUND=069
+# POWERLEVEL9K_CUSTOM_FEDORA_ICON_FOREGROUND=015
+# POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(custom_fedora_icon dir vcs)
+
+# POWERLEVEL9K_DIR_PATH_ABSOLUTE=true
+POWERLEVEL9K_SHORTEN_DIR_LENGTH=2
+POWERLEVEL9K_SHORTEN_DELIMITER=""
+POWERLEVEL9K_SHORTEN_STRATEGY=truncate_to_unique
+POWERLEVEL9K_PROMPT_ADD_NEWLINE=true
+POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(
+    # user
+    os_icon
+    dir
+    vcs
+)
+POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(
+    command_execution_time
+    virtualenv
+    pyenv
+    nodenv
+    nvm
+    nodeenv
+    node_version
+)
+
+POWERLEVEL9K_NODE_VERSION_PROJECT_ONLY=true
+
+# VI_MODE_RESET_PROMPT_ON_MODE_CHANGE=true
+# VI_MODE_SET_CURSOR=true
+# MODE_INDICATOR="%F{yellow}+%f"
+
+plugins=(sudo virtualenv git zsh-autosuggestions )
+
+source $ZSH/oh-my-zsh.sh
+
+source /home/manjeet/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+#[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+alias python3='python3.7'
+alias ls='exa --color=always'
+alias ll='exa -l --icons -F --color=always'
+alias llt='exa -l --icons -F -T --color=always'
+alias vi='nvim'
+alias work='cd ~/work'
+alias pers='cd ~/Documents/pers'
+
+export EDITOR=nvim; 
+
+export PATH="$PATH:$HOME/.local/bin";
+
+export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
+function setup_python_debugger() {
+    echo "Creating FIFOs"
+    echo "============================="
+    if [ -f "./fifo_stdin" ] && [ -f "./fifo_stdout" ]; then
+        echo "FIFOs already exists."
+    else
+        mkfifo fifo_stdin;
+        mkfifo fifo_stdout;
+    fi
+    
+    echo
+    echo "Use debugger as follows:"
+    echo "  import pdb"
+    echo "  mypdb = pdb.Pdb(stdin=open('fifo_stdin', 'r'), stdout=open('fifo_stdout', 'w'))"
+    echo "  mypdb.set_trace() #use sticky in pdb prompt."
+    
+    echo
+    echo "Opening stdout in background and starting writing to stdin"
+    echo "============================="
+    cat fifo_stdout & cat > fifo_stdin
+}
+
